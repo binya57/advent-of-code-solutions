@@ -1,16 +1,39 @@
-function isSymbol(char = '') {
-    return /\D/g.test(char) && char !== '.';
+//@ts-check
+
+
+/**
+ * 
+ * @param {string[]} matrix 
+ * @return {[number, number, number][][]}
+ */
+function getIndices(matrix) {
+    return matrix.reduce(
+        (/**@type {[number, number, number][][]} */indices, row) => {
+            indices.push([]);
+            const numbersMatches = [...row.matchAll(/\d+/g)];
+            numbersMatches.map((match) => {
+                const [number] = match;
+                const index = match.index || 0;
+                const matchLength = number.length;
+                indices[indices.length - 1].push([+number, index, matchLength]);
+            })
+            return indices;
+        }, [])
 }
 
-function getAdjacendCells(matrix, rowIndex, columnIndex) {
-    return [
-        matrix[rowIndex][columnIndex - 1],
-        matrix[rowIndex][columnIndex + 1],
-        matrix[rowIndex - 1][columnIndex],
-        matrix[rowIndex - 1][columnIndex - 1],
-        matrix[rowIndex - 1][columnIndex + 1],
-        matrix[rowIndex + 1][columnIndex],
-        matrix[rowIndex + 1][columnIndex - 1],
-        matrix[rowIndex + 1][columnIndex + 1],
-    ]
+/**
+ * @typedef {{value: number, }} TNumberMatch
+ */
+
+/**
+ * 
+ * @param {*} matrix 
+ * @param {*} index 
+ */
+function getAdjacentIndices(matrix, index) {
+
+}
+
+module.exports = {
+    getIndices,
 }
