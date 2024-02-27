@@ -11,22 +11,17 @@ const { readInputAsString, getInputLines } = require("../../lib/helper");
 
 /**
  * 
- * @param {string[]} rows 
- * @return {TNumberMatch[][]}
+ * @param {string} row 
+ * @return {TNumberMatch[]}
  */
-function getNumbersIndices(rows) {
-    return rows.reduce(
-        (/**@type {TNumberMatch[][]} */indices, row) => {
-            indices.push([]);
-            const numbersMatches = [...row.matchAll(/\d+/g)];
-            numbersMatches.map((match) => {
-                const [number] = match;
-                const index = match.index || 0;
-                const matchLength = number.length;
-                indices[indices.length - 1].push({ value: +number, startIndex: index, length: matchLength });
-            })
-            return indices;
-        }, [])
+function getNumbersIndices(row) {
+    const numbersMatches = [...row.matchAll(/\d+/g)];
+    return numbersMatches.map((match) => {
+        const [number] = match;
+        const index = match.index || 0;
+        const matchLength = number.length;
+        return { value: +number, startIndex: index, length: matchLength }
+    })
 }
 
 
@@ -58,23 +53,16 @@ function getAdjacentIndices(rows, row, start, length) {
  * @param {string[]} rows 
  */
 function getPartNumbers(rows) {
-    /**
-     * @type {number[]}
-     */
-    let partNumbers = [];
-    const numbersIndices = getNumbersIndices(rows);
-    numbersIndices.forEach((row, rowIndex) => {
-        row.forEach(numberMatch => {
-            const { value, startIndex, length } = numberMatch;
+    const numbersIndices = rows.map(row => getNumbersIndices(row));
+    return numbersIndices.reduce((/**@type {number[]} */partNumbers, row, rowIndex) => {
+        const partNumbersInRow = row.filter(numberMatch => {
+            const { startIndex, length } = numberMatch;
             const adjacent = getAdjacentIndices(rows, rowIndex, startIndex, length);
             const hasAdjacentSymbol = adjacent.some(value => /[^\d\.]+/g.test(value))
-            if (hasAdjacentSymbol) {
-                partNumbers.push(value);
-            }
-
-        })
-    })
-    return partNumbers;
+            return hasAdjacentSymbol;
+        }).map(partNumber => partNumber.value);
+        return partNumbers.concat(partNumbersInRow);
+    }, [])
 }
 /**
  * 
@@ -90,10 +78,9 @@ function run() {
     console.log(sumPartNumbers(input));
 }
 
-run();
 
 module.exports = {
-    getIndices: getNumbersIndices,
+    getNumbersIndices,
     getAdjacentIndices,
     getPartNumbers,
     sumPartNumbers
