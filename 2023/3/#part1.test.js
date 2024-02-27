@@ -1,5 +1,5 @@
 //@ts-check
-const { getIndices, getAdjacentIndices, getPartNumbers } = require("./#part1")
+const { getIndices, getAdjacentIndices, getPartNumbers, sumPartNumbers } = require("./#part1")
 
 test('get matrix indices', () => {
     expect(getIndices(
@@ -20,7 +20,7 @@ test('get Adjacent Indices', () => {
         '***',
 
     ]
-    expect(getAdjacentIndices(test, 1, 1,)).toEqual(new Array(8).fill("*"));
+    expect(getAdjacentIndices(test, 1, 1, 1)).toEqual(new Array(8).fill("*"));
 })
 
 describe('get part numbers ', () => {
@@ -80,14 +80,31 @@ describe('get part numbers ', () => {
 
         expect(getPartNumbers(test4)).toEqual([5]);
     })
-    test('test5', () => {
-        expect(() => getPartNumbers(test5)).toThrow("has adjacent number")
+    // test('test5', () => {
+    //     expect(() => getPartNumbers(test5)).toThrow("has adjacent number")
 
-    })
+    // })
     test('test5', () => {
 
         expect(getPartNumbers(test6)).toEqual([])
     })
 
     // }
+})
+
+describe('sum part numbers', () => {
+    expect(sumPartNumbers(
+        [
+            '467..114..',
+            '...*......',
+            '..35..633.',
+            '......#...',
+            '617*......',
+            '.....+.58.',
+            '..592.....',
+            '......755.',
+            '...$.*....',
+            '.664.598..',
+        ]
+    )).toEqual(4361)
 })

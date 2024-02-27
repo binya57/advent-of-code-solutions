@@ -6,6 +6,8 @@
  * @property {number} length
  */
 
+const { readInputAsString, getInputLines } = require("../../lib/helper");
+
 
 /**
  * 
@@ -32,59 +34,67 @@ function getNumbersIndices(rows) {
  * 
  * @param {string[]} rows 
  * @param {number} row 
- * @param {number} index 
+ * @param {number} start 
+ * @param {number} length
  */
-function getAdjacentIndices(rows, row, index) {
-    return (
-        [
-            rows[row]?.[index + 1], // next in row
-            rows[row - 1]?.[index + 1], // topRight
-            rows[row + 1]?.[index + 1], // bottomRight
-            rows[row]?.[index - 1], // prev in row
-            rows[row - 1]?.[index - 1], // topLeft
-            rows[row + 1]?.[index - 1], // bottomLeft
-            rows[row - 1]?.[index], // top
-            rows[row + 1]?.[index], // bottom
-        ].filter(Boolean)
-    )
+
+function getAdjacentIndices(rows, row, start, length) {
+    /**
+     * @type {string[]}
+     */
+    const indices = [];
+    for (let i = start - 1; i < start + length + 1; i++) {
+        indices.push(rows[row - 1]?.[i], rows[row + 1]?.[i]);
+    }
+    return [
+        rows[row]?.[start - 1], // prevInRow,
+        rows[row]?.[start + length], // nextInRow        
+    ].concat(indices).filter(Boolean);
 }
+
 
 /**
  * 
- * @param {string[]} matrix 
+ * @param {string[]} rows 
  */
-function getPartNumbers(matrix) {
+function getPartNumbers(rows) {
+    /**
+     * @type {number[]}
+     */
     let partNumbers = [];
-    const numbersIndices = getNumbersIndices(matrix);
-    numbersIndices.forEach((row, index) => {
+    const numbersIndices = getNumbersIndices(rows);
+    numbersIndices.forEach((row, rowIndex) => {
         row.forEach(numberMatch => {
             const { value, startIndex, length } = numberMatch;
-            let isPartNumber = false;
-            for (let i = startIndex; i < startIndex + length; i++) {
-                const adjacent = getAdjacentIndices(matrix, index, i);
-                const hasAdjacentSymbol = adjacent.some(value => /[^\d\.]+/g.test(value))
-                if (adjacent.some(char => !isNaN(+char))) { // testing only
-                    throw new Error("has adjacent number");
-                }
-                if (hasAdjacentSymbol) {
-                    isPartNumber = true;
-                    break;
-                }
-
-            }
-            if (isPartNumber) {
+            const adjacent = getAdjacentIndices(rows, rowIndex, startIndex, length);
+            const hasAdjacentSymbol = adjacent.some(value => /[^\d\.]+/g.test(value))
+            if (hasAdjacentSymbol) {
                 partNumbers.push(value);
             }
 
         })
     })
-
     return partNumbers;
-
 }
+/**
+ * 
+ * @param {string[]} rows 
+ */
+function sumPartNumbers(rows) {
+    const partNumbers = getPartNumbers(rows)
+    return partNumbers.reduce((sum, value) => sum + value, 0);
+}
+
+function run() {
+    const input = getInputLines(readInputAsString(__dirname));
+    console.log(sumPartNumbers(input));
+}
+
+run();
 
 module.exports = {
     getIndices: getNumbersIndices,
     getAdjacentIndices,
-    getPartNumbers
+    getPartNumbers,
+    sumPartNumbers
 }
