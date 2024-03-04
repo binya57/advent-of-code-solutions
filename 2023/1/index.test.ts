@@ -1,4 +1,4 @@
-const { getLineCalibrationValue, sumLinesCalibrationValues } = require('./index.js');
+const { getLineCalibrationValue, sumLinesCalibrationValues } = require('./index.ts');
 
 
 const datasets = [

@@ -1,4 +1,4 @@
-const NUMBERS_NAME_MAP = /**@type {const} */ ({
+const NUMBERS_NAME_MAP = {
     'one': 1,
     'two': 2,
     'three': 3,
@@ -8,7 +8,7 @@ const NUMBERS_NAME_MAP = /**@type {const} */ ({
     'seven': 7,
     'eight': 8,
     'nine': 9
-});
+};
 
 function getLineCalibrationValue(line = '') {
     const regexStr = `(?=(${Object.keys(NUMBERS_NAME_MAP).join('|')}|\\d))`; // positive lookahead to get all matches for overlapping words
@@ -16,8 +16,8 @@ function getLineCalibrationValue(line = '') {
     if (!matches?.length) {
         throw new Error(getLineCalibrationValue.name + ' no matches found in line: ' + line)
     }
-    const toNumber = match => NUMBERS_NAME_MAP[match] ?? match;
-    const result = `${toNumber(matches[0][1])}${toNumber(matches.at(-1)[1])}`;
+    const toNumber = (match: string) => NUMBERS_NAME_MAP[match as keyof typeof NUMBERS_NAME_MAP] ?? match;
+    const result = `${toNumber(matches[0][1])}${toNumber(matches.at(-1)![1])}`;
     return result;
 }
 
@@ -35,7 +35,7 @@ const linesStr = fs.readFileSync(path.join(__dirname, 'input.txt')).toString('ut
 const solutionResult = sumLinesCalibrationValues(linesStr);
 console.log('input solution result: ' + solutionResult);
 
-module.exports = {
+export {
     getLineCalibrationValue,
     sumLinesCalibrationValues
 }
