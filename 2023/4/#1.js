@@ -21,14 +21,35 @@ function readCardData(card) {
  * @param {number[]} owned 
  */
 function sumCardPoints(winning, owned) {
-    return owned.reduce((sum, value) => {
-        const isWinning = winning.find(number => number === value);
-        if (!isWinning) return sum;
-        if (sum === 0) {
-            return sum + 1;
+    const numberOfWinningNumbers = countCardsWinningNumbers(winning, owned);
+    if (numberOfWinningNumbers === 0) return 0;
+    return 2 ** (numberOfWinningNumbers - 1)
+}
+
+/**
+ * 
+ * @param {number[]} winning 
+ * @param {number[]} owned 
+ */
+function countCardsWinningNumbers(winning, owned) {
+    return owned.reduce((winningCount, number) => {
+        if (isWinning(number, winning)) {
+            return winningCount + 1;
         }
-        return sum * 2;
+        return winningCount;
     }, 0)
+}
+
+
+/**
+ *
+ * @param {any} value
+ * @param {Array} winning 
+ * @return {boolean}
+ */
+
+function isWinning(value, winning) {
+    return !!winning.find(number => number === value);
 }
 
 /**
@@ -52,5 +73,7 @@ function run() {
 module.exports = {
     readCardData,
     sumCardPoints,
-    sumAllCardsPoints
+    sumAllCardsPoints,
+    isWinning,
+    countCardsWinningNumbers
 }
