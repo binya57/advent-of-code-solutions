@@ -44,7 +44,7 @@ function countCardsWinningNumbers(winning, owned) {
 /**
  *
  * @param {any} value
- * @param {Array} winning 
+ * @param {Array<number>} winning 
  * @return {boolean}
  */
 
